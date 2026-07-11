@@ -223,6 +223,8 @@ function ApplicationsPage() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Edit application"
+                      title="Edit"
                       onClick={() => {
                         setEditing(app);
                         setDialogOpen(true);
@@ -233,6 +235,8 @@ function ApplicationsPage() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Delete application"
+                      title="Delete"
                       onClick={() => setDeleteId(app.id)}
                     >
                       <Trash2 className="h-4 w-4" />
