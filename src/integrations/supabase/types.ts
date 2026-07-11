@@ -14,7 +14,123 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          applied_date: string | null
+          company: string
+          created_at: string
+          deadline: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          position: string
+          salary_range: string | null
+          source: string | null
+          status: Database["public"]["Enums"]["application_status"]
+          updated_at: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          applied_date?: string | null
+          company: string
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          position: string
+          salary_range?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          applied_date?: string | null
+          company?: string
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          position?: string
+          salary_range?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      resume_analyses: {
+        Row: {
+          created_at: string
+          id: string
+          job_description: string
+          match_score: number
+          missing_skills: Json
+          resume_text: string
+          strengths: Json
+          suggestions: Json
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_description: string
+          match_score?: number
+          missing_skills?: Json
+          resume_text: string
+          strengths?: Json
+          suggestions?: Json
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_description?: string
+          match_score?: number
+          missing_skills?: Json
+          resume_text?: string
+          strengths?: Json
+          suggestions?: Json
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +139,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      application_status:
+        | "wishlist"
+        | "applied"
+        | "interviewing"
+        | "offer"
+        | "rejected"
+        | "accepted"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +272,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      application_status: [
+        "wishlist",
+        "applied",
+        "interviewing",
+        "offer",
+        "rejected",
+        "accepted",
+      ],
+    },
   },
 } as const
