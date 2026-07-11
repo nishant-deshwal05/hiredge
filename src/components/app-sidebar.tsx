@@ -1,14 +1,4 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import {
-  LayoutDashboard,
-  Briefcase,
-  FileSearch,
-  Settings,
-  Sparkles,
-  LogOut,
-  Sun,
-  Moon,
-} from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -27,12 +17,22 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
+import { Logo } from "@/components/logo";
+import {
+  IcDashboard,
+  IcBriefcase,
+  IcScan,
+  IcSettings,
+  IcLogout,
+  IcSun,
+  IcMoon,
+} from "@/components/icons";
 
 const items = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Applications", url: "/applications", icon: Briefcase },
-  { title: "Resume Analysis", url: "/resume", icon: FileSearch },
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Dashboard", url: "/dashboard", icon: IcDashboard },
+  { title: "Applications", url: "/applications", icon: IcBriefcase },
+  { title: "Resume Scan", url: "/resume", icon: IcScan },
+  { title: "Settings", url: "/settings", icon: IcSettings },
 ] as const;
 
 export function AppSidebar() {
@@ -52,30 +52,40 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg gradient-brand">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
+        <Link to="/dashboard" className="flex items-center gap-2 px-1.5 py-1.5">
+          <Logo size={28} />
+          <div className="flex min-w-0 flex-col leading-tight group-data-[collapsible=icon]:hidden">
+            <span className="truncate text-[13px] font-semibold tracking-tight">
+              HirePilot<span className="ml-1 text-primary">AI</span>
+            </span>
+            <span className="truncate text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+              Job Search OS
+            </span>
           </div>
-          <div className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
-            <span className="truncate text-sm font-bold">HirePilot AI</span>
-            <span className="truncate text-xs text-muted-foreground">Job search copilot</span>
-          </div>
-        </div>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em]">
+            Workspace
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
-                const active = currentPath === item.url || currentPath.startsWith(item.url + "/");
+                const active =
+                  currentPath === item.url || currentPath.startsWith(item.url + "/");
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
-                      <Link to={item.url} className="flex items-center gap-2">
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={item.title}
+                      className="h-8"
+                    >
+                      <Link to={item.url} className="flex items-center gap-2.5">
+                        <item.icon size={16} className={active ? "text-primary" : ""} />
+                        <span className="text-[13px]">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -87,23 +97,23 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border">
-        <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col">
+        <div className="flex items-center gap-1 px-1 group-data-[collapsible=icon]:flex-col">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggle}
             aria-label="Toggle theme"
-            className="shrink-0"
+            className="h-8 w-8 shrink-0"
           >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {theme === "dark" ? <IcSun size={15} /> : <IcMoon size={15} />}
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleSignOut}
-            className="flex-1 justify-start group-data-[collapsible=icon]:hidden"
+            className="h-8 flex-1 justify-start text-[13px] group-data-[collapsible=icon]:hidden"
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <IcLogout size={15} className="mr-2" />
             Sign out
           </Button>
         </div>
