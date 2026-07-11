@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Logo } from "@/components/logo";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -92,10 +93,8 @@ function AuthPage() {
       />
       <div className="w-full max-w-md">
         <Link to="/" className="mb-8 flex items-center justify-center gap-2">
-          <div className="grid h-10 w-10 place-items-center rounded-xl gradient-brand shadow-glow">
-            <Sparkles className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold">HirePilot AI</span>
+          <Logo size={36} />
+          <span className="text-xl font-semibold tracking-tight">HirePilot<span className="ml-1 text-primary">AI</span></span>
         </Link>
 
         <Card className="border-border/70 p-8 shadow-elegant">
