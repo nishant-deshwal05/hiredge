@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Logo } from "@/components/logo";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -19,9 +20,13 @@ function AuthedLayout() {
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
         <SidebarInset className="flex flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl">
-            <SidebarTrigger />
-            <div className="text-sm text-muted-foreground">HirePilot AI</div>
+          <header className="sticky top-0 z-30 flex h-12 items-center gap-3 border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl">
+            <SidebarTrigger className="h-7 w-7" />
+            <div className="h-4 w-px bg-border" />
+            <div className="flex items-center gap-2">
+              <Logo size={20} />
+              <span className="text-[13px] font-medium tracking-tight">HirePilot<span className="ml-1 text-primary">AI</span></span>
+            </div>
           </header>
           <main className="flex-1 p-4 sm:p-6 lg:p-8">
             <Outlet />
@@ -31,3 +36,4 @@ function AuthedLayout() {
     </SidebarProvider>
   );
 }
+
