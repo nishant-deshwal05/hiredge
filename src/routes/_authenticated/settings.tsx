@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Loader2, User, Palette } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -69,26 +69,23 @@ function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-sm text-muted-foreground">Manage your profile and preferences.</p>
-      </div>
+      <header>
+        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Manage your profile and preferences.</p>
+      </header>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <User className="h-4 w-4 text-primary" />
-            Profile
-          </CardTitle>
-          <CardDescription>Public information about you.</CardDescription>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">Profile</CardTitle>
+          <CardDescription>Displayed inside your workspace.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input value={email} disabled />
+            <div className="space-y-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" value={email} disabled />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="full_name">Full name</Label>
               <Input
                 id="full_name"
@@ -99,13 +96,13 @@ function SettingsPage() {
               />
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="avatar_url">Avatar URL</Label>
             <Input
               id="avatar_url"
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
-              placeholder="https://..."
+              placeholder="https://…"
               maxLength={500}
               disabled={isLoading}
             />
@@ -114,7 +111,7 @@ function SettingsPage() {
             <Button
               onClick={() => save.mutate()}
               disabled={save.isPending || isLoading}
-              className="gradient-brand text-primary-foreground"
+              className="bg-foreground text-background hover:bg-foreground/90"
             >
               {save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save changes
@@ -124,11 +121,8 @@ function SettingsPage() {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Palette className="h-4 w-4 text-primary" />
-            Appearance
-          </CardTitle>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">Appearance</CardTitle>
           <CardDescription>Choose your color theme.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -136,21 +130,24 @@ function SettingsPage() {
             {(["light", "dark"] as Theme[]).map((t) => (
               <button
                 key={t}
+                type="button"
                 onClick={() => setTheme(t)}
-                className={`rounded-xl border-2 p-4 text-left transition-all ${
-                  theme === t ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
-                }`}
+                className={
+                  "rounded-lg border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+                  (theme === t ? "border-primary bg-primary/5" : "border-border hover:border-primary/40")
+                }
+                aria-pressed={theme === t}
               >
                 <div
-                  className="mb-3 h-16 rounded-md"
+                  className="mb-3 h-14 rounded-md border border-border"
                   style={{
                     background:
                       t === "dark"
-                        ? "linear-gradient(135deg, oklch(0.14 0.015 260), oklch(0.22 0.02 260))"
-                        : "linear-gradient(135deg, oklch(0.99 0.005 260), oklch(0.94 0.03 265))",
+                        ? "linear-gradient(135deg, oklch(0.13 0 0), oklch(0.22 0.02 158))"
+                        : "linear-gradient(135deg, oklch(0.99 0 0), oklch(0.94 0.04 158))",
                   }}
                 />
-                <div className="font-medium capitalize">{t}</div>
+                <div className="text-sm font-medium capitalize">{t}</div>
               </button>
             ))}
           </div>
@@ -160,7 +157,7 @@ function SettingsPage() {
       <Separator />
 
       <p className="text-center text-xs text-muted-foreground">
-        HirePilot AI · Your data is private and secured with row-level access controls.
+        Hiredge · Your data is private and protected by row-level access controls.
       </p>
     </div>
   );
