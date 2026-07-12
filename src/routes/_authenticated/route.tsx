@@ -17,15 +17,15 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthedLayout() {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
+      <div className="flex min-h-dvh w-full bg-background">
         <AppSidebar />
         <SidebarInset className="flex flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex h-12 items-center gap-3 border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl">
-            <SidebarTrigger className="h-7 w-7" />
+          <header className="sticky top-0 z-30 flex h-12 items-center gap-3 border-b border-border/70 bg-background/85 px-4 backdrop-blur">
+            <SidebarTrigger className="h-7 w-7" aria-label="Toggle sidebar" />
             <div className="h-4 w-px bg-border" />
             <div className="flex items-center gap-2">
               <Logo size={20} />
-              <span className="text-[13px] font-medium tracking-tight">HirePilot<span className="ml-1 text-primary">AI</span></span>
+              <span className="text-[13px] font-medium tracking-tight">Hiredge</span>
             </div>
           </header>
           <main className="flex-1 p-4 sm:p-6 lg:p-8">
@@ -36,4 +36,3 @@ function AuthedLayout() {
     </SidebarProvider>
   );
 }
-
