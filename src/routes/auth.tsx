@@ -2,15 +2,14 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
-import { Logo } from "@/components/logo";
 import { toast } from "sonner";
 
+import { Logo } from "@/components/logo";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional().default("signin"),
@@ -52,12 +51,12 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account created!");
+        toast.success("Account created");
         navigate({ to: "/dashboard" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("Welcome back!");
+        toast.success("Welcome back");
         navigate({ to: "/dashboard" });
       }
     } catch (err) {
@@ -83,29 +82,24 @@ function AuthPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-background px-4 py-12">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-60"
-        style={{
-          background:
-            "radial-gradient(50% 40% at 50% 0%, color-mix(in oklab, var(--primary) 25%, transparent), transparent)",
-        }}
-      />
-      <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
-          <Logo size={36} />
-          <span className="text-xl font-semibold tracking-tight">HirePilot<span className="ml-1 text-primary">AI</span></span>
+    <div className="flex min-h-dvh items-center justify-center bg-background px-4 py-12">
+      <div className="w-full max-w-sm">
+        <Link
+          to="/"
+          className="mb-8 flex items-center justify-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <Logo showWordmark size={30} />
         </Link>
 
-        <Card className="border-border/70 p-8 shadow-elegant">
-          <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold">
-              {mode === "signin" ? "Welcome back" : "Create your account"}
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
+          <div className="mb-6">
+            <h1 className="text-xl font-semibold tracking-tight">
+              {mode === "signin" ? "Sign in to Hiredge" : "Create your Hiredge account"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {mode === "signin"
-                ? "Sign in to continue your job search"
-                : "Start tracking applications in seconds"}
+                ? "Continue where you left off."
+                : "Start organizing your job search."}
             </p>
           </div>
 
@@ -125,26 +119,27 @@ function AuthPage() {
             Continue with Google
           </Button>
 
-          <div className="my-6 flex items-center gap-3">
+          <div className="my-5 flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-xs uppercase tracking-wider text-muted-foreground">or</span>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">or</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="name">Full name</Label>
                 <Input
                   id="name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Alex Chen"
+                  placeholder="Your name"
+                  autoComplete="name"
                   required
                 />
               </div>
             )}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -152,10 +147,11 @@ function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
+                autoComplete="email"
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -163,6 +159,7 @@ function AuthPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 8 characters"
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 minLength={8}
                 required
               />
@@ -170,7 +167,7 @@ function AuthPage() {
 
             <Button
               type="submit"
-              className="w-full gradient-brand text-primary-foreground"
+              className="w-full bg-foreground text-background hover:bg-foreground/90"
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -179,15 +176,19 @@ function AuthPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            {mode === "signin" ? "New here? " : "Have an account? "}
+            {mode === "signin" ? "New to Hiredge? " : "Already have an account? "}
             <button
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-              className="font-semibold text-primary hover:underline"
+              className="font-medium text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
             >
-              {mode === "signin" ? "Create an account" : "Sign in instead"}
+              {mode === "signin" ? "Create an account" : "Sign in"}
             </button>
           </p>
-        </Card>
+        </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Track smarter. Get hired faster.
+        </p>
       </div>
     </div>
   );

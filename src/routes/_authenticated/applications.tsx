@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Plus, Search, Pencil, Trash2, ExternalLink, Filter } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -10,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
@@ -38,6 +36,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  IcPlus,
+  IcSearch,
+  IcFilter,
+  IcEdit,
+  IcTrash,
+  IcExternal,
+} from "@/components/icons";
+import { STATUS_ORDER, statusLabel, statusTone, type Status } from "@/lib/status";
 
 type Application = {
   id: string;
@@ -54,18 +61,7 @@ type Application = {
   created_at: string;
 };
 
-type Status = "wishlist" | "applied" | "interviewing" | "offer" | "rejected" | "accepted";
-
-const STATUSES: Status[] = ["wishlist", "applied", "interviewing", "offer", "accepted", "rejected"];
-
-const statusStyle: Record<Status, string> = {
-  wishlist: "bg-muted text-muted-foreground",
-  applied: "bg-info/15 text-info border-info/30",
-  interviewing: "bg-warning/15 text-warning border-warning/30",
-  offer: "bg-success/15 text-success border-success/30",
-  accepted: "bg-primary/15 text-primary border-primary/30",
-  rejected: "bg-destructive/15 text-destructive border-destructive/30",
-};
+type SortKey = "recent" | "company" | "deadline";
 
 export const Route = createFileRoute("/_authenticated/applications")({
   component: ApplicationsPage,
@@ -75,11 +71,12 @@ function ApplicationsPage() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<Status | "all">("all");
+  const [sortBy, setSortBy] = useState<SortKey>("recent");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Application | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Application | null>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["applications"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -104,149 +101,205 @@ function ApplicationsPage() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-  const filtered = (data ?? []).filter((a) => {
-    const matchSearch =
-      !search ||
-      a.company.toLowerCase().includes(search.toLowerCase()) ||
-      a.position.toLowerCase().includes(search.toLowerCase()) ||
-      (a.location?.toLowerCase() ?? "").includes(search.toLowerCase());
-    const matchStatus = statusFilter === "all" || a.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
+  const filtered = useMemo(() => {
+    const rows = (data ?? []).filter((a) => {
+      const q = search.trim().toLowerCase();
+      const matchSearch =
+        !q ||
+        a.company.toLowerCase().includes(q) ||
+        a.position.toLowerCase().includes(q) ||
+        (a.location?.toLowerCase() ?? "").includes(q);
+      const matchStatus = statusFilter === "all" || a.status === statusFilter;
+      return matchSearch && matchStatus;
+    });
+    const sorted = [...rows];
+    if (sortBy === "company") sorted.sort((a, b) => a.company.localeCompare(b.company));
+    else if (sortBy === "deadline")
+      sorted.sort((a, b) => {
+        const ax = a.deadline ? new Date(a.deadline).getTime() : Infinity;
+        const bx = b.deadline ? new Date(b.deadline).getTime() : Infinity;
+        return ax - bx;
+      });
+    return sorted;
+  }, [data, search, statusFilter, sortBy]);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <div className="mx-auto max-w-7xl space-y-5">
+      <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Applications</h1>
-          <p className="text-sm text-muted-foreground">
-            All your jobs, in one place. {data?.length ?? 0} total.
+          <h1 className="text-2xl font-semibold tracking-tight">Applications</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {data?.length ?? 0} total · track roles from Saved to Offer.
           </p>
         </div>
         <Button
-          className="gradient-brand text-primary-foreground"
+          size="sm"
+          className="bg-foreground text-background hover:bg-foreground/90"
           onClick={() => {
             setEditing(null);
             setDialogOpen(true);
           }}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Application
+          <IcPlus size={14} className="mr-1.5" />
+          Add application
         </Button>
+      </header>
+
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="relative flex-1">
+          <IcSearch
+            size={14}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            placeholder="Search company, position, or location"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+            aria-label="Search applications"
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as Status | "all")}>
+          <SelectTrigger className="w-full sm:w-40" aria-label="Filter by status">
+            <IcFilter size={13} className="mr-1.5" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            {STATUS_ORDER.map((s) => (
+              <SelectItem key={s} value={s}>
+                {statusLabel(s)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortKey)}>
+          <SelectTrigger className="w-full sm:w-40" aria-label="Sort applications">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="recent">Newest first</SelectItem>
+            <SelectItem value="company">Company A→Z</SelectItem>
+            <SelectItem value="deadline">Deadline soonest</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <Card className="border-border/70">
-        <CardContent className="flex flex-col gap-3 p-4 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search company, position, location..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as Status | "all")}>
-            <SelectTrigger className="w-full sm:w-48">
-              <Filter className="mr-2 h-4 w-4" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              {STATUSES.map((s) => (
-                <SelectItem key={s} value={s} className="capitalize">
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
-
       {isLoading ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 w-full" />
+            <Skeleton key={i} className="h-20 w-full" />
           ))}
         </div>
+      ) : isError ? (
+        <Card className="border-destructive/40">
+          <CardContent className="flex flex-col items-center gap-2 py-10 text-center">
+            <p className="text-sm">Couldn't load applications.</p>
+            <p className="text-xs text-muted-foreground">{(error as Error).message}</p>
+            <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
+          </CardContent>
+        </Card>
       ) : filtered.length === 0 ? (
         <Card className="border-dashed">
-          <CardContent className="py-16 text-center">
+          <CardContent className="py-14 text-center">
             <p className="text-sm text-muted-foreground">
               {data?.length === 0
-                ? "No applications yet. Add your first to get started."
+                ? "No applications yet. Add your first role to get started."
                 : "No applications match your filters."}
             </p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-3">
-          {filtered.map((app) => (
-            <Card key={app.id} className="hover-lift border-border/70">
-              <CardContent className="p-5">
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="truncate text-lg font-semibold">{app.position}</h3>
-                      <Badge className={`capitalize ${statusStyle[app.status]}`} variant="outline">
-                        {app.status}
-                      </Badge>
+        <>
+          {/* Desktop table */}
+          <div className="hidden overflow-hidden rounded-lg border border-border md:block">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-2.5 text-left font-medium">Position</th>
+                  <th className="px-4 py-2.5 text-left font-medium">Company</th>
+                  <th className="px-4 py-2.5 text-left font-medium">Status</th>
+                  <th className="px-4 py-2.5 text-left font-medium">Deadline</th>
+                  <th className="px-4 py-2.5 text-right font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((app) => (
+                  <tr key={app.id} className="border-t border-border hover:bg-muted/30">
+                    <td className="px-4 py-3">
+                      <div className="font-medium">{app.position}</div>
+                      {app.location && (
+                        <div className="text-xs text-muted-foreground">{app.location}</div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{app.company}</td>
+                    <td className="px-4 py-3">
+                      <span className={"rounded-full border px-2 py-0.5 text-[11px] " + statusTone(app.status)}>
+                        {statusLabel(app.status)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                      {app.deadline ? format(new Date(app.deadline), "MMM d, yyyy") : "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <RowActions
+                        app={app}
+                        onEdit={() => {
+                          setEditing(app);
+                          setDialogOpen(true);
+                        }}
+                        onDelete={() => setDeleteTarget(app)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile cards */}
+          <ul className="grid gap-2 md:hidden">
+            {filtered.map((app) => (
+              <li key={app.id}>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-semibold">{app.position}</div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          {app.company}
+                          {app.location ? ` · ${app.location}` : ""}
+                        </div>
+                      </div>
+                      <span className={"shrink-0 rounded-full border px-2 py-0.5 text-[10px] " + statusTone(app.status)}>
+                        {statusLabel(app.status)}
+                      </span>
                     </div>
-                    <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                      {app.company}
-                      {app.location ? ` · ${app.location}` : ""}
-                      {app.salary_range ? ` · ${app.salary_range}` : ""}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
                       {app.applied_date && (
-                        <span>Applied {format(new Date(app.applied_date), "MMM d, yyyy")}</span>
+                        <span>Applied {format(new Date(app.applied_date), "MMM d")}</span>
                       )}
                       {app.deadline && (
-                        <span>Deadline {format(new Date(app.deadline), "MMM d, yyyy")}</span>
+                        <span>Due {format(new Date(app.deadline), "MMM d")}</span>
                       )}
                       {app.source && <span>via {app.source}</span>}
                     </div>
-                    {app.notes && (
-                      <p className="mt-3 line-clamp-2 rounded-md bg-muted/50 p-2 text-sm">
-                        {app.notes}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1">
-                    {app.url && (
-                      <Button asChild variant="ghost" size="icon" title="Open URL">
-                        <a href={app.url} target="_blank" rel="noreferrer">
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Edit application"
-                      title="Edit"
-                      onClick={() => {
-                        setEditing(app);
-                        setDialogOpen(true);
-                      }}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Delete application"
-                      title="Delete"
-                      onClick={() => setDeleteId(app.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <div className="mt-3 flex justify-end">
+                      <RowActions
+                        app={app}
+                        onEdit={() => {
+                          setEditing(app);
+                          setDialogOpen(true);
+                        }}
+                        onDelete={() => setDeleteTarget(app)}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <ApplicationDialog
@@ -259,20 +312,22 @@ function ApplicationsPage() {
         }}
       />
 
-      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete application?</AlertDialogTitle>
+            <AlertDialogTitle>Delete this application?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone.
+              {deleteTarget
+                ? `“${deleteTarget.position}” at ${deleteTarget.company} will be permanently removed. This cannot be undone.`
+                : ""}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                if (deleteId) deleteMut.mutate(deleteId);
-                setDeleteId(null);
+                if (deleteTarget) deleteMut.mutate(deleteTarget.id);
+                setDeleteTarget(null);
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
@@ -281,6 +336,54 @@ function ApplicationsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  );
+}
+
+function RowActions({
+  app,
+  onEdit,
+  onDelete,
+}: {
+  app: Application;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-end gap-0.5">
+      {app.url && (
+        <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+          <a
+            href={app.url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Open ${app.company} posting`}
+            title="Open posting"
+          >
+            <IcExternal size={14} />
+          </a>
+        </Button>
+      )}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        aria-label={`Edit ${app.position} at ${app.company}`}
+        title="Edit"
+        onClick={onEdit}
+      >
+        <IcEdit size={14} />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+        aria-label={`Delete ${app.position} at ${app.company}`}
+        title="Delete"
+        onClick={onDelete}
+      >
+        <IcTrash size={14} />
+      </Button>
     </div>
   );
 }
@@ -346,66 +449,84 @@ function ApplicationDialog({
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editing ? "Edit application" : "Add application"}</DialogTitle>
-          <DialogDescription>Track a new job opportunity.</DialogDescription>
+          <DialogDescription>
+            Track a new opportunity from source to outcome.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="company">Company *</Label>
-              <Input id="company" name="company" defaultValue={editing?.company ?? ""} required maxLength={200} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="position">Position *</Label>
-              <Input id="position" name="position" defaultValue={editing?.position ?? ""} required maxLength={200} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" name="location" defaultValue={editing?.location ?? ""} maxLength={200} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="salary_range">Salary range</Label>
-              <Input id="salary_range" name="salary_range" defaultValue={editing?.salary_range ?? ""} maxLength={100} />
-            </div>
-            <div className="space-y-2">
+            <Field id="company" label="Company" required defaultValue={editing?.company} maxLength={200} />
+            <Field id="position" label="Position" required defaultValue={editing?.position} maxLength={200} />
+            <Field id="location" label="Location" defaultValue={editing?.location ?? ""} maxLength={200} />
+            <Field id="salary_range" label="Salary range" defaultValue={editing?.salary_range ?? ""} maxLength={100} />
+            <div className="space-y-1.5">
               <Label htmlFor="status">Status</Label>
               <Select name="status" defaultValue={editing?.status ?? "applied"}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger id="status"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {STATUSES.map((s) => (
-                    <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
+                  {STATUS_ORDER.map((s) => (
+                    <SelectItem key={s} value={s}>{statusLabel(s)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="source">Source</Label>
-              <Input id="source" name="source" placeholder="LinkedIn, referral..." defaultValue={editing?.source ?? ""} maxLength={100} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="applied_date">Applied date</Label>
-              <Input id="applied_date" name="applied_date" type="date" defaultValue={editing?.applied_date ?? ""} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="deadline">Deadline</Label>
-              <Input id="deadline" name="deadline" type="date" defaultValue={editing?.deadline ?? ""} />
-            </div>
+            <Field id="source" label="Source" placeholder="LinkedIn, referral…" defaultValue={editing?.source ?? ""} maxLength={100} />
+            <Field id="applied_date" label="Applied date" type="date" defaultValue={editing?.applied_date ?? ""} />
+            <Field id="deadline" label="Deadline" type="date" defaultValue={editing?.deadline ?? ""} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="url">URL</Label>
-            <Input id="url" name="url" type="url" placeholder="https://..." defaultValue={editing?.url ?? ""} maxLength={500} />
-          </div>
-          <div className="space-y-2">
+          <Field id="url" label="URL" type="url" placeholder="https://…" defaultValue={editing?.url ?? ""} maxLength={500} />
+          <div className="space-y-1.5">
             <Label htmlFor="notes">Notes</Label>
             <Textarea id="notes" name="notes" rows={4} defaultValue={editing?.notes ?? ""} maxLength={2000} />
           </div>
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={saving} className="gradient-brand text-primary-foreground">
-              {saving ? "Saving..." : editing ? "Save changes" : "Add application"}
+            <Button
+              type="submit"
+              disabled={saving}
+              className="bg-foreground text-background hover:bg-foreground/90"
+            >
+              {saving ? "Saving…" : editing ? "Save changes" : "Add application"}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function Field({
+  id,
+  label,
+  required,
+  type = "text",
+  placeholder,
+  defaultValue,
+  maxLength,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  type?: string;
+  placeholder?: string;
+  defaultValue?: string | null;
+  maxLength?: number;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id}>
+        {label}
+        {required && " *"}
+      </Label>
+      <Input
+        id={id}
+        name={id}
+        type={type}
+        placeholder={placeholder}
+        defaultValue={defaultValue ?? ""}
+        required={required}
+        maxLength={maxLength}
+      />
+    </div>
   );
 }

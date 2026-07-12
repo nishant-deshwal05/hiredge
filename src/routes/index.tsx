@@ -3,36 +3,35 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import {
   IcArrowRight,
-  IcArrowUpRight,
   IcCheck,
-  IcSpark,
-  IcTrend,
-  IcTarget,
-  IcBolt,
-  IcScan,
   IcBriefcase,
-  IcCheckCircle,
+  IcCalendar,
+  IcTrend,
+  IcScan,
+  IcTarget,
 } from "@/components/icons";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
-const COMPANIES = ["Stripe", "Linear", "Vercel", "Ramp", "Notion", "Anthropic", "Figma", "Airbnb"];
-
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       {/* NAV */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link to="/" aria-label="HirePilot AI">
-            <Logo showWordmark size={30} />
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <Link
+            to="/"
+            aria-label="Hiredge home"
+            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <Logo showWordmark />
           </Link>
-          <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+          <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
             <a href="#workflow" className="hover:text-foreground transition-colors">Workflow</a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
+            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+            <a href="#privacy" className="hover:text-foreground transition-colors">Privacy</a>
           </nav>
           <div className="flex items-center gap-1.5">
             <Button asChild variant="ghost" size="sm">
@@ -40,8 +39,7 @@ function LandingPage() {
             </Button>
             <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
               <Link to="/auth" search={{ mode: "signup" }}>
-                Start free
-                <IcArrowRight size={14} className="ml-1.5" />
+                Get started
               </Link>
             </Button>
           </div>
@@ -49,213 +47,198 @@ function LandingPage() {
       </header>
 
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border/60">
-        <div className="pointer-events-none absolute inset-0 grid-bg opacity-60" />
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-[520px]"
-          style={{
-            background:
-              "radial-gradient(60% 60% at 50% 0%, color-mix(in oklab, var(--primary) 26%, transparent) 0%, transparent 70%)",
-          }}
-        />
-        <div className="pointer-events-none absolute inset-x-0 top-[520px] h-40 bg-gradient-to-b from-transparent to-background" />
-
-        <div className="relative mx-auto max-w-6xl px-5 pt-24 pb-16 sm:pt-32">
-          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inset-0 rounded-full bg-primary animate-pulse-ring" />
-                <span className="relative rounded-full h-1.5 w-1.5 bg-primary" />
-              </span>
-              <span className="tabular">v1.0 — public beta</span>
-              <span className="text-border">·</span>
-              <span>Powered by Gemini</span>
-            </div>
-
-            <h1 className="animate-fade-up mt-7 text-balance text-5xl font-semibold tracking-[-0.03em] sm:text-6xl md:text-[76px] md:leading-[1.02]" style={{ animationDelay: "60ms" }}>
-              The operating system<br />
-              for your <span className="text-emerald-gradient">job search</span>.
-            </h1>
-            <p className="animate-fade-up mt-6 max-w-xl text-[17px] leading-relaxed text-muted-foreground" style={{ animationDelay: "120ms" }}>
-              Track every application, get instant AI resume feedback on any job description,
-              and ship offers — from one calm, keyboard-first workspace.
+      <section className="border-b border-border/70">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.05fr_1fr] md:gap-14 md:py-24">
+          <div className="flex flex-col justify-center">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">
+              Job Search OS
             </p>
-
-            <div className="animate-fade-up mt-9 flex flex-wrap items-center justify-center gap-2" style={{ animationDelay: "180ms" }}>
-              <Button asChild size="lg" className="h-11 bg-foreground text-background hover:bg-foreground/90 px-5">
+            <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-[52px] md:leading-[1.05]">
+              Your job search, organized from application to offer.
+            </h1>
+            <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+              Hiredge is a focused workspace for tracking applications, staying on top of
+              deadlines, and reviewing your funnel — with lightweight resume insights when
+              you need them.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-2">
+              <Button asChild size="lg" className="h-10 bg-foreground text-background hover:bg-foreground/90">
                 <Link to="/auth" search={{ mode: "signup" }}>
-                  Get started — it's free
-                  <IcArrowRight size={16} className="ml-2" />
+                  Create free account
+                  <IcArrowRight size={15} className="ml-2" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="h-11 px-5">
-                <a href="#features">
-                  See how it works
-                </a>
+              <Button asChild size="lg" variant="outline" className="h-10">
+                <a href="#workflow">See how it works</a>
               </Button>
             </div>
-
-            <div className="animate-fade-up mt-6 flex items-center gap-4 text-xs text-muted-foreground" style={{ animationDelay: "240ms" }}>
-              <span className="inline-flex items-center gap-1.5"><IcCheck size={12} className="text-primary" /> No credit card</span>
-              <span className="text-border">·</span>
-              <span className="inline-flex items-center gap-1.5"><IcCheck size={12} className="text-primary" /> Ready in 30s</span>
-              <span className="text-border">·</span>
-              <span className="inline-flex items-center gap-1.5"><IcCheck size={12} className="text-primary" /> Private by default</span>
-            </div>
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
+              <li className="inline-flex items-center gap-1.5">
+                <IcCheck size={12} className="text-primary" /> Free while in beta
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <IcCheck size={12} className="text-primary" /> No credit card required
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <IcCheck size={12} className="text-primary" /> Your data stays yours
+              </li>
+            </ul>
           </div>
 
-          {/* Dashboard preview */}
-          <div className="animate-fade-up mx-auto mt-20 max-w-5xl" style={{ animationDelay: "320ms" }}>
-            <DashboardPreview />
-          </div>
-        </div>
-
-        {/* Trusted-by marquee */}
-        <div className="relative border-t border-border/60 py-8">
-          <div className="mx-auto max-w-6xl px-5">
-            <p className="text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-              Students hired at
-            </p>
-            <div className="mt-5 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-              <div className="flex w-max gap-14 animate-marquee">
-                {[...COMPANIES, ...COMPANIES].map((c, i) => (
-                  <span
-                    key={i}
-                    className="whitespace-nowrap text-2xl font-semibold tracking-tight text-muted-foreground/70"
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURES bento */}
-      <section id="features" className="mx-auto max-w-6xl px-5 py-24">
-        <div className="mx-auto max-w-2xl">
-          <p className="text-xs uppercase tracking-[0.2em] text-primary">Features</p>
-          <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Everything you need. Nothing you don't.
-          </h2>
-          <p className="mt-4 text-muted-foreground">
-            Built with the same care as the tools you already love — Linear, Stripe, Notion.
-          </p>
-        </div>
-
-        <div className="mt-14 grid gap-3 md:grid-cols-6 md:grid-rows-2">
-          <FeatureCard
-            className="md:col-span-4"
-            icon={<IcScan size={18} />}
-            title="AI resume matching"
-            desc="Paste any JD, get a match score, missing skills and rewrite suggestions in seconds."
-          >
-            <ResumePreview />
-          </FeatureCard>
-          <FeatureCard
-            className="md:col-span-2"
-            icon={<IcTarget size={18} />}
-            title="Kanban-quiet tracking"
-            desc="Track statuses, deadlines and notes without the noise."
-          >
-            <StatusPreview />
-          </FeatureCard>
-          <FeatureCard
-            className="md:col-span-2"
-            icon={<IcTrend size={18} />}
-            title="Real-time analytics"
-            desc="Understand what's working across your funnel."
-          >
-            <MiniChart />
-          </FeatureCard>
-          <FeatureCard
-            className="md:col-span-4"
-            icon={<IcBolt size={18} />}
-            title="Keyboard-first, calm by design"
-            desc="Every action reachable in two keystrokes. Zero clutter, zero anxiety."
-          >
-            <KeyboardPreview />
-          </FeatureCard>
+          <DashboardPreview />
         </div>
       </section>
 
       {/* WORKFLOW */}
-      <section id="workflow" className="border-y border-border/60 bg-muted/30">
-        <div className="mx-auto max-w-6xl px-5 py-24">
-          <div className="mx-auto max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Workflow</p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-              From chaos to offers in three moves.
+      <section id="workflow" className="border-b border-border/70">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <div className="max-w-2xl">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">Workflow</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+              A simple loop that keeps you moving.
             </h2>
           </div>
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
             {[
-              { n: "01", t: "Capture", d: "Log every role with company, position, status and notes." },
-              { n: "02", t: "Analyze", d: "Score your resume against any JD and rewrite it with AI." },
-              { n: "03", t: "Advance", d: "Watch your funnel from applied to accepted, live." },
+              {
+                n: "01",
+                t: "Capture the role",
+                d: "Save any opportunity with company, position, link, deadline, and notes — in seconds.",
+              },
+              {
+                n: "02",
+                t: "Track the pipeline",
+                d: "Move applications through Saved, Applied, Interview, Offer, and Rejected as things progress.",
+              },
+              {
+                n: "03",
+                t: "Review and adjust",
+                d: "See your funnel and upcoming deadlines so you know what needs attention next.",
+              },
             ].map((s) => (
               <div
                 key={s.n}
-                className="surface-elevated hover-lift group rounded-xl p-6"
+                className="rounded-lg border border-border bg-card p-6"
               >
-                <div className="flex items-center gap-3">
-                  <span className="tabular font-mono text-xs text-primary">{s.n}</span>
-                  <span className="h-px flex-1 bg-border" />
-                </div>
-                <h3 className="mt-6 text-xl font-semibold tracking-tight">{s.t}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-                <div className="mt-8 flex items-center gap-1.5 text-xs text-muted-foreground transition-colors group-hover:text-primary">
-                  Learn more <IcArrowUpRight size={12} />
-                </div>
+                <span className="font-mono text-xs text-primary">{s.n}</span>
+                <h3 className="mt-4 text-base font-semibold tracking-tight">{s.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section id="pricing" className="mx-auto max-w-4xl px-5 py-24 text-center">
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-12">
-          <div className="pointer-events-none absolute inset-0 grid-bg opacity-40" />
-          <div
-            className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[560px] -translate-x-1/2 rounded-full"
-            style={{
-              background:
-                "radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--primary) 40%, transparent) 0%, transparent 70%)",
-            }}
-          />
-          <div className="relative">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Start free. Land the offer.
+      {/* FEATURES */}
+      <section id="features" className="border-b border-border/70">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <div className="max-w-2xl">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">Core features</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Built for the work, not for demos.
             </h2>
-            <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
-              Free forever for individuals. Bring your resume, we bring the AI.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-2">
-              <Button asChild size="lg" className="h-11 bg-foreground text-background hover:bg-foreground/90 px-5">
-                <Link to="/auth" search={{ mode: "signup" }}>
-                  Create your account <IcArrowRight size={16} className="ml-2" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="h-11 px-5">
-                <Link to="/auth">Sign in</Link>
-              </Button>
-            </div>
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                icon: <IcBriefcase size={16} />,
+                t: "Application tracking",
+                d: "One source of truth for every role you're considering, applied to, or interviewing for.",
+              },
+              {
+                icon: <IcCalendar size={16} />,
+                t: "Deadline reminders",
+                d: "Upcoming deadlines surface on your dashboard so nothing slips.",
+              },
+              {
+                icon: <IcTrend size={16} />,
+                t: "Funnel analytics",
+                d: "Understand your pipeline with charts based on your own data — no fabricated numbers.",
+              },
+              {
+                icon: <IcScan size={16} />,
+                t: "Resume insights (Beta)",
+                d: "Paste a resume and a job description to see matched and missing keywords.",
+              },
+            ].map((f) => (
+              <div key={f.t} className="rounded-lg border border-border bg-card p-5">
+                <div className="grid h-8 w-8 place-items-center rounded-md bg-muted text-primary">
+                  {f.icon}
+                </div>
+                <h3 className="mt-4 text-sm font-semibold tracking-tight">{f.t}</h3>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{f.d}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-border/60">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8 text-sm text-muted-foreground">
+      {/* PRIVACY */}
+      <section id="privacy" className="border-b border-border/70 bg-muted/30">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 md:grid-cols-[1fr_1.2fr]">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">Privacy</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Your search is yours.
+            </h2>
+          </div>
+          <div className="space-y-4 text-[15px] leading-relaxed text-muted-foreground">
+            <p>
+              Hiredge stores your applications and notes in a private workspace scoped to
+              your account. Row-level access controls mean only you can read your data.
+            </p>
+            <p>
+              Resume insights run as a transparent keyword comparison — nothing is scraped,
+              shared, or used to train a model. You can delete your account and all its
+              data at any time.
+            </p>
+            <ul className="grid gap-2 pt-2 sm:grid-cols-2">
+              {[
+                "Per-user data isolation",
+                "No third-party trackers",
+                "Export or delete on request",
+                "HTTPS everywhere",
+              ].map((p) => (
+                <li key={p} className="flex items-start gap-2 text-sm text-foreground">
+                  <IcCheck size={14} className="mt-0.5 text-primary" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
+        <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+          Track smarter. Get hired faster.
+        </h2>
+        <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
+          Start organizing your search in under a minute.
+        </p>
+        <div className="mt-7 flex flex-wrap justify-center gap-2">
+          <Button asChild size="lg" className="h-10 bg-foreground text-background hover:bg-foreground/90">
+            <Link to="/auth" search={{ mode: "signup" }}>
+              Create free account <IcArrowRight size={15} className="ml-2" />
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="h-10">
+            <Link to="/auth">Sign in</Link>
+          </Button>
+        </div>
+      </section>
+
+      <footer className="border-t border-border/70">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground sm:px-6">
           <div className="flex items-center gap-2">
-            <Logo size={22} />
-            <span>© {new Date().getFullYear()} HirePilot AI</span>
+            <Logo />
+            <span>© {new Date().getFullYear()} Hiredge</span>
           </div>
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+            <a href="#privacy" className="hover:text-foreground transition-colors">Privacy</a>
+            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+            <Link to="/auth" className="hover:text-foreground transition-colors">Sign in</Link>
           </div>
         </div>
       </footer>
@@ -263,113 +246,99 @@ function LandingPage() {
   );
 }
 
-/* ---------- Preview widgets ---------- */
+/* ---------- Dashboard preview (illustrative UI only, no fake metrics) ---------- */
 
 function DashboardPreview() {
   return (
     <div className="relative">
-      <div
-        className="pointer-events-none absolute -inset-2 rounded-3xl"
-        style={{
-          background:
-            "linear-gradient(180deg, color-mix(in oklab, var(--primary) 25%, transparent), transparent 60%)",
-          filter: "blur(30px)",
-        }}
-      />
-      <div className="relative rounded-2xl border border-border bg-card p-2 shadow-elegant">
-        <div className="rounded-xl border border-border/70 bg-background">
-          {/* window bar */}
-          <div className="flex items-center gap-3 border-b border-border/70 px-4 py-2.5">
+      <div className="rounded-xl border border-border bg-card p-2 shadow-sm">
+        <div className="rounded-lg border border-border/70 bg-background">
+          <div className="flex items-center gap-2 border-b border-border/70 px-3 py-2">
             <div className="flex gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-muted" />
-              <span className="h-2.5 w-2.5 rounded-full bg-muted" />
-              <span className="h-2.5 w-2.5 rounded-full bg-muted" />
+              <span className="h-2 w-2 rounded-full bg-muted" />
+              <span className="h-2 w-2 rounded-full bg-muted" />
+              <span className="h-2 w-2 rounded-full bg-muted" />
             </div>
-            <div className="ml-2 flex items-center gap-2 rounded-md bg-muted/60 px-2.5 py-1 text-[11px] text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              app.hirepilot.ai/dashboard
+            <div className="ml-1 rounded bg-muted px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+              hiredge.app / dashboard
             </div>
           </div>
-          {/* content */}
-          <div className="grid grid-cols-12 gap-3 p-4">
-            {/* Mini sidebar */}
-            <div className="col-span-3 hidden flex-col gap-1 sm:flex">
+
+          <div className="grid grid-cols-12 gap-3 p-3">
+            <div className="col-span-12 flex items-center gap-2 sm:col-span-3 sm:flex-col sm:items-stretch">
               <Logo showWordmark size={22} />
-              <div className="mt-4 space-y-0.5">
+              <div className="ml-auto flex gap-1 sm:ml-0 sm:mt-3 sm:flex-col">
                 {[
-                  { i: <IcBriefcase size={14} />, l: "Dashboard", a: true },
-                  { i: <IcBriefcase size={14} />, l: "Applications" },
-                  { i: <IcScan size={14} />, l: "Resume" },
-                  { i: <IcTarget size={14} />, l: "Settings" },
-                ].map((r, i) => (
+                  { i: <IcBriefcase size={12} />, l: "Dashboard", a: true },
+                  { i: <IcBriefcase size={12} />, l: "Applications" },
+                  { i: <IcScan size={12} />, l: "Resume" },
+                  { i: <IcTarget size={12} />, l: "Settings" },
+                ].map((r) => (
                   <div
-                    key={i}
+                    key={r.l}
                     className={
-                      "flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px] " +
+                      "flex items-center gap-1.5 rounded px-1.5 py-1 text-[10px] " +
                       (r.a ? "bg-muted text-foreground" : "text-muted-foreground")
                     }
                   >
                     {r.i}
-                    <span>{r.l}</span>
+                    <span className="hidden sm:inline">{r.l}</span>
                   </div>
                 ))}
               </div>
             </div>
-            {/* Main */}
-            <div className="col-span-12 space-y-3 sm:col-span-9">
-              <div className="grid grid-cols-4 gap-2">
+
+            <div className="col-span-12 space-y-2 sm:col-span-9">
+              <div className="grid grid-cols-3 gap-2">
                 {[
-                  { l: "Applications", v: "42", d: "+8" },
-                  { l: "Interviews", v: "8", d: "+2" },
-                  { l: "Offers", v: "3", d: "+1" },
-                  { l: "Response rate", v: "62%", d: "+9%" },
+                  { l: "Applications", v: "—" },
+                  { l: "Interviews", v: "—" },
+                  { l: "Offers", v: "—" },
                 ].map((s) => (
-                  <div key={s.l} className="rounded-lg border border-border/70 bg-card p-3 text-left">
-                    <div className="text-[10px] text-muted-foreground">{s.l}</div>
-                    <div className="mt-1 flex items-baseline gap-1.5">
-                      <div className="tabular text-lg font-semibold">{s.v}</div>
-                      <div className="text-[10px] text-primary tabular">{s.d}</div>
-                    </div>
+                  <div key={s.l} className="rounded-md border border-border/70 bg-card p-2">
+                    <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{s.l}</div>
+                    <div className="mt-1 font-mono text-base font-semibold">{s.v}</div>
                   </div>
                 ))}
               </div>
-              <div className="rounded-lg border border-border/70 bg-card p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[11px] font-medium">Application funnel</span>
-                  <span className="text-[10px] text-muted-foreground tabular">last 30 days</span>
+
+              <div className="rounded-md border border-border/70 bg-card p-2">
+                <div className="mb-1.5 flex items-center justify-between">
+                  <span className="text-[10px] font-medium">Funnel</span>
+                  <span className="font-mono text-[9px] text-muted-foreground">your data</span>
                 </div>
-                <BarSpark />
-              </div>
-              <div className="rounded-lg border border-border/70 bg-card">
-                {[
-                  { c: "Stripe", p: "New Grad SWE", s: "Interviewing" },
-                  { c: "Linear", p: "Product Engineer", s: "Applied" },
-                  { c: "Vercel", p: "Frontend Intern", s: "Offer" },
-                ].map((r, i, arr) => (
-                  <div
-                    key={r.c}
-                    className={
-                      "flex items-center justify-between px-3 py-2.5 text-[11px]" +
-                      (i < arr.length - 1 ? " border-b border-border/70" : "")
-                    }
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className="grid h-5 w-5 place-items-center rounded bg-muted text-[9px] font-semibold">
-                        {r.c[0]}
-                      </span>
-                      <span className="font-medium">{r.p}</span>
-                      <span className="text-muted-foreground">{r.c}</span>
+                <div className="space-y-1">
+                  {[
+                    { l: "Saved", w: 100 },
+                    { l: "Applied", w: 70 },
+                    { l: "Interview", w: 42 },
+                    { l: "Offer", w: 14 },
+                  ].map((r) => (
+                    <div key={r.l} className="flex items-center gap-2">
+                      <span className="w-14 text-[9px] text-muted-foreground">{r.l}</span>
+                      <div className="h-1.5 flex-1 rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary/70"
+                          style={{ width: `${r.w}%` }}
+                        />
+                      </div>
                     </div>
-                    <span
-                      className={
-                        "rounded-full border px-2 py-0.5 text-[10px] " +
-                        (r.s === "Offer"
-                          ? "border-primary/30 bg-primary/10 text-primary"
-                          : r.s === "Interviewing"
-                          ? "border-warning/30 bg-warning/10 text-warning"
-                          : "border-border bg-muted text-muted-foreground")
-                      }
-                    >
+                  ))}
+                </div>
+              </div>
+
+              <div className="divide-y divide-border/70 rounded-md border border-border/70 bg-card">
+                {[
+                  { p: "Frontend Engineer", c: "Company A", s: "Interview" },
+                  { p: "Product Designer", c: "Company B", s: "Applied" },
+                  { p: "Data Analyst", c: "Company C", s: "Saved" },
+                ].map((r) => (
+                  <div key={r.p} className="flex items-center justify-between px-2 py-1.5 text-[10px]">
+                    <div className="min-w-0 truncate">
+                      <span className="font-medium">{r.p}</span>
+                      <span className="text-muted-foreground"> · {r.c}</span>
+                    </div>
+                    <span className="rounded border border-border bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
                       {r.s}
                     </span>
                   </div>
@@ -379,163 +348,6 @@ function DashboardPreview() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function BarSpark() {
-  const bars = [30, 46, 38, 62, 54, 78, 66, 88, 72, 92, 80, 100];
-  return (
-    <div className="flex h-16 items-end gap-1">
-      {bars.map((b, i) => (
-        <div
-          key={i}
-          className="flex-1 rounded-t bg-gradient-to-t from-primary/50 to-primary"
-          style={{ height: `${b}%`, opacity: 0.4 + (i / bars.length) * 0.6 }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function FeatureCard({
-  className,
-  icon,
-  title,
-  desc,
-  children,
-}: {
-  className?: string;
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <div
-      className={
-        "surface-elevated hover-lift relative flex flex-col overflow-hidden rounded-xl p-6 " +
-        (className ?? "")
-      }
-    >
-      <div className="flex items-center gap-2 text-primary">
-        <span className="grid h-7 w-7 place-items-center rounded-md border border-primary/30 bg-primary/10">
-          {icon}
-        </span>
-        <span className="text-[11px] font-medium uppercase tracking-[0.15em]">Feature</span>
-      </div>
-      <h3 className="mt-4 text-lg font-semibold tracking-tight">{title}</h3>
-      <p className="mt-1.5 max-w-md text-sm text-muted-foreground">{desc}</p>
-      {children && <div className="mt-6 flex-1">{children}</div>}
-    </div>
-  );
-}
-
-function ResumePreview() {
-  return (
-    <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-      <div className="space-y-2 rounded-lg border border-border/70 bg-card p-3">
-        <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-          Missing skills
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {["TypeScript", "GraphQL", "System Design", "PostgreSQL"].map((s) => (
-            <span
-              key={s}
-              className="rounded border border-border bg-muted px-2 py-0.5 text-[10px]"
-            >
-              {s}
-            </span>
-          ))}
-        </div>
-        <div className="mt-3 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-          Suggestion
-        </div>
-        <div className="text-[11px] leading-relaxed text-muted-foreground">
-          Lead with impact: "Shipped GraphQL API serving 12M reqs/day" beats
-          "Worked on backend".
-        </div>
-      </div>
-      <div className="grid place-items-center rounded-lg border border-primary/30 bg-primary/5 p-5 min-w-[120px]">
-        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Match</div>
-        <div className="tabular text-4xl font-semibold text-primary">87</div>
-        <div className="text-[10px] text-primary">Strong fit</div>
-      </div>
-    </div>
-  );
-}
-
-function StatusPreview() {
-  const items = [
-    { l: "Interviewing", n: 8, w: "70%" },
-    { l: "Applied", n: 24, w: "100%" },
-    { l: "Offer", n: 3, w: "26%" },
-  ];
-  return (
-    <div className="space-y-2.5">
-      {items.map((it) => (
-        <div key={it.l} className="space-y-1">
-          <div className="flex justify-between text-[11px]">
-            <span className="text-muted-foreground">{it.l}</span>
-            <span className="tabular font-medium">{it.n}</span>
-          </div>
-          <div className="h-1.5 rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-primary/60 to-primary"
-              style={{ width: it.w }}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MiniChart() {
-  const pts = [10, 20, 14, 32, 26, 42, 38, 56, 50, 68];
-  const path = pts.map((p, i) => `${(i / (pts.length - 1)) * 100},${100 - p}`).join(" ");
-  return (
-    <div className="rounded-lg border border-border/70 bg-card p-3">
-      <div className="flex items-baseline justify-between">
-        <div>
-          <div className="text-[10px] text-muted-foreground">Response rate</div>
-          <div className="tabular text-lg font-semibold">62%</div>
-        </div>
-        <div className="tabular text-[11px] text-primary">↑ 9%</div>
-      </div>
-      <svg viewBox="0 0 100 80" className="mt-2 h-16 w-full" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="mini-f" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="oklch(0.72 0.19 156)" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="oklch(0.72 0.19 156)" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <polyline points={`0,80 ${path} 100,80`} fill="url(#mini-f)" />
-        <polyline points={path} fill="none" stroke="oklch(0.72 0.19 156)" strokeWidth="1.5" />
-      </svg>
-    </div>
-  );
-}
-
-function KeyboardPreview() {
-  return (
-    <div className="flex flex-wrap items-center gap-2 text-[11px]">
-      {[
-        ["N", "New application"],
-        ["/", "Search"],
-        ["R", "Resume scan"],
-        ["G", "Go to dashboard"],
-      ].map(([k, l]) => (
-        <span
-          key={k}
-          className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-2 py-1"
-        >
-          <kbd className="grid h-5 min-w-5 place-items-center rounded border border-border bg-muted px-1 text-[10px] font-medium">
-            {k}
-          </kbd>
-          <span className="text-muted-foreground">{l}</span>
-        </span>
-      ))}
     </div>
   );
 }

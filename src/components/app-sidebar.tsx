@@ -31,7 +31,7 @@ import {
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: IcDashboard },
   { title: "Applications", url: "/applications", icon: IcBriefcase },
-  { title: "Resume Scan", url: "/resume", icon: IcScan },
+  { title: "Resume", url: "/resume", icon: IcScan },
   { title: "Settings", url: "/settings", icon: IcSettings },
 ] as const;
 
@@ -52,22 +52,21 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <Link to="/dashboard" className="flex items-center gap-2 px-1.5 py-1.5">
-          <Logo size={28} />
-          <div className="flex min-w-0 flex-col leading-tight group-data-[collapsible=icon]:hidden">
-            <span className="truncate text-[13px] font-semibold tracking-tight">
-              HirePilot<span className="ml-1 text-primary">AI</span>
-            </span>
-            <span className="truncate text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
-              Job Search OS
-            </span>
-          </div>
+        <Link
+          to="/dashboard"
+          className="flex items-center gap-2 px-1.5 py-1.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Hiredge dashboard"
+        >
+          <Logo size={24} />
+          <span className="truncate text-[13px] font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
+            Hiredge
+          </span>
         </Link>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em]">
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.14em]">
             Workspace
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -102,7 +101,7 @@ export function AppSidebar() {
             variant="ghost"
             size="icon"
             onClick={toggle}
-            aria-label="Toggle theme"
+            aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
             className="h-8 w-8 shrink-0"
           >
             {theme === "dark" ? <IcSun size={15} /> : <IcMoon size={15} />}
