@@ -233,7 +233,11 @@ function AuthPage() {
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {mode === "signin" ? "New to Hiredge? " : "Already have an account? "}
             <button
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              type="button"
+              onClick={() => {
+                setMode(mode === "signin" ? "signup" : "signin");
+                setErrors({});
+              }}
               className="font-medium text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
             >
               {mode === "signin" ? "Create an account" : "Sign in"}
