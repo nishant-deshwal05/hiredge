@@ -18,9 +18,16 @@ export const Route = createFileRoute("/")({
 function LandingPage() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
+      {/* Skip link for keyboard users */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-sm focus:text-background"
+      >
+        Skip to content
+      </a>
       {/* NAV */}
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link
             to="/"
             aria-label="Hiredge home"
@@ -28,7 +35,7 @@ function LandingPage() {
           >
             <Logo showWordmark />
           </Link>
-          <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
+          <nav aria-label="Primary" className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
             <a href="#workflow" className="hover:text-foreground transition-colors">Workflow</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#privacy" className="hover:text-foreground transition-colors">Privacy</a>
