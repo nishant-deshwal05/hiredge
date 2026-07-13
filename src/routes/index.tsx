@@ -41,9 +41,27 @@ function LandingPage() {
             <a href="#privacy" className="hover:text-foreground transition-colors">Privacy</a>
           </nav>
           <div className="flex items-center gap-1.5">
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link to="/auth">Sign in</Link>
             </Button>
+            <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
+              <Link to="/auth" search={{ mode: "signup" }}>
+                Get started
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main id="main">
+      {/* HERO */}
+      <section className="border-b border-border/70">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.05fr_1fr] md:gap-14 md:py-24">
+          <div className="flex flex-col justify-center">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">
+              Job Search OS
+            </p>
+            <h1 className="mt-4 text-balance text-[32px] font-semibold leading-[1.1] tracking-tight sm:text-5xl md:text-[52px] md:leading-[1.05]">
             <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
               <Link to="/auth" search={{ mode: "signup" }}>
                 Get started
