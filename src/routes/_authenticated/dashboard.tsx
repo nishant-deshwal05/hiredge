@@ -77,14 +77,14 @@ function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Your job search at a glance.</p>
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">Dashboard</h1>
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">Your job search at a glance.</p>
         </div>
-        <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
+        <Button asChild size="sm" className="shrink-0 bg-foreground text-background hover:bg-foreground/90">
           <Link to="/applications">
-            Add application <IcArrowRight size={14} className="ml-1.5" />
+            Add <IcArrowRight size={14} className="ml-1.5" />
           </Link>
         </Button>
       </header>
