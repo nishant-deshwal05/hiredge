@@ -15,6 +15,26 @@ const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional().default("signin"),
 });
 
+const signinSchema = z.object({
+  email: z.string().trim().email({ message: "Enter a valid email address" }).max(255),
+  password: z.string().min(1, { message: "Password is required" }).max(200),
+});
+
+const signupSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(2, { message: "Please enter your name" })
+    .max(100, { message: "Name must be under 100 characters" }),
+  email: z.string().trim().email({ message: "Enter a valid email address" }).max(255),
+  password: z
+    .string()
+    .min(8, { message: "Use at least 8 characters" })
+    .max(200, { message: "Password too long" }),
+});
+
+type FieldErrors = Partial<Record<"fullName" | "email" | "password", string>>;
+
 export const Route = createFileRoute("/auth")({
   validateSearch: (search) => searchSchema.parse(search),
   component: AuthPage,
@@ -28,6 +48,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -35,10 +56,27 @@ function AuthPage() {
     });
   }, [navigate]);
 
-  useEffect(() => setMode(initialMode), [initialMode]);
+  useEffect(() => {
+    setMode(initialMode);
+    setErrors({});
+  }, [initialMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    const schema = mode === "signup" ? signupSchema : signinSchema;
+    const parsed = schema.safeParse(
+      mode === "signup" ? { fullName, email, password } : { email, password },
+    );
+    if (!parsed.success) {
+      const next: FieldErrors = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0] as keyof FieldErrors;
+        if (key && !next[key]) next[key] = issue.message;
+      }
+      setErrors(next);
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
@@ -125,7 +163,7 @@ function AuthPage() {
             <div className="h-px flex-1 bg-border" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             {mode === "signup" && (
               <div className="space-y-1.5">
                 <Label htmlFor="name">Full name</Label>
@@ -135,8 +173,14 @@ function AuthPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Your name"
                   autoComplete="name"
-                  required
+                  aria-invalid={!!errors.fullName}
+                  aria-describedby={errors.fullName ? "name-err" : undefined}
                 />
+                {errors.fullName && (
+                  <p id="name-err" role="alert" className="text-xs text-destructive">
+                    {errors.fullName}
+                  </p>
+                )}
               </div>
             )}
             <div className="space-y-1.5">
@@ -148,8 +192,14 @@ function AuthPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
-                required
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-err" : undefined}
               />
+              {errors.email && (
+                <p id="email-err" role="alert" className="text-xs text-destructive">
+                  {errors.email}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
@@ -158,11 +208,16 @@ function AuthPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
+                placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                minLength={8}
-                required
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? "password-err" : undefined}
               />
+              {errors.password && (
+                <p id="password-err" role="alert" className="text-xs text-destructive">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
             <Button
@@ -178,7 +233,11 @@ function AuthPage() {
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {mode === "signin" ? "New to Hiredge? " : "Already have an account? "}
             <button
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              type="button"
+              onClick={() => {
+                setMode(mode === "signin" ? "signup" : "signin");
+                setErrors({});
+              }}
               className="font-medium text-foreground underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
             >
               {mode === "signin" ? "Create an account" : "Sign in"}

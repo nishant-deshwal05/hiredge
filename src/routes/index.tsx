@@ -18,9 +18,16 @@ export const Route = createFileRoute("/")({
 function LandingPage() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
+      {/* Skip link for keyboard users */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-sm focus:text-background"
+      >
+        Skip to content
+      </a>
       {/* NAV */}
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link
             to="/"
             aria-label="Hiredge home"
@@ -28,13 +35,13 @@ function LandingPage() {
           >
             <Logo showWordmark />
           </Link>
-          <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
+          <nav aria-label="Primary" className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
             <a href="#workflow" className="hover:text-foreground transition-colors">Workflow</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#privacy" className="hover:text-foreground transition-colors">Privacy</a>
           </nav>
           <div className="flex items-center gap-1.5">
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link to="/auth">Sign in</Link>
             </Button>
             <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
@@ -46,6 +53,7 @@ function LandingPage() {
         </div>
       </header>
 
+      <main id="main">
       {/* HERO */}
       <section className="border-b border-border/70">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.05fr_1fr] md:gap-14 md:py-24">
@@ -53,7 +61,7 @@ function LandingPage() {
             <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">
               Job Search OS
             </p>
-            <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-[52px] md:leading-[1.05]">
+            <h1 className="mt-4 text-balance text-[32px] font-semibold leading-[1.1] tracking-tight sm:text-5xl md:text-[52px] md:leading-[1.05]">
               Your job search, organized from application to offer.
             </h1>
             <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
@@ -228,6 +236,7 @@ function LandingPage() {
           </Button>
         </div>
       </section>
+      </main>
 
       <footer className="border-t border-border/70">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground sm:px-6">
