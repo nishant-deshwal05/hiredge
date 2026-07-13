@@ -15,6 +15,26 @@ const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional().default("signin"),
 });
 
+const signinSchema = z.object({
+  email: z.string().trim().email({ message: "Enter a valid email address" }).max(255),
+  password: z.string().min(1, { message: "Password is required" }).max(200),
+});
+
+const signupSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(2, { message: "Please enter your name" })
+    .max(100, { message: "Name must be under 100 characters" }),
+  email: z.string().trim().email({ message: "Enter a valid email address" }).max(255),
+  password: z
+    .string()
+    .min(8, { message: "Use at least 8 characters" })
+    .max(200, { message: "Password too long" }),
+});
+
+type FieldErrors = Partial<Record<"fullName" | "email" | "password", string>>;
+
 export const Route = createFileRoute("/auth")({
   validateSearch: (search) => searchSchema.parse(search),
   component: AuthPage,
@@ -28,6 +48,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -35,10 +56,27 @@ function AuthPage() {
     });
   }, [navigate]);
 
-  useEffect(() => setMode(initialMode), [initialMode]);
+  useEffect(() => {
+    setMode(initialMode);
+    setErrors({});
+  }, [initialMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    const schema = mode === "signup" ? signupSchema : signinSchema;
+    const parsed = schema.safeParse(
+      mode === "signup" ? { fullName, email, password } : { email, password },
+    );
+    if (!parsed.success) {
+      const next: FieldErrors = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0] as keyof FieldErrors;
+        if (key && !next[key]) next[key] = issue.message;
+      }
+      setErrors(next);
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
