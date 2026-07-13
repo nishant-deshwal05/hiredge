@@ -62,23 +62,6 @@ function LandingPage() {
               Job Search OS
             </p>
             <h1 className="mt-4 text-balance text-[32px] font-semibold leading-[1.1] tracking-tight sm:text-5xl md:text-[52px] md:leading-[1.05]">
-            <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
-              <Link to="/auth" search={{ mode: "signup" }}>
-                Get started
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* HERO */}
-      <section className="border-b border-border/70">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.05fr_1fr] md:gap-14 md:py-24">
-          <div className="flex flex-col justify-center">
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">
-              Job Search OS
-            </p>
-            <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-[52px] md:leading-[1.05]">
               Your job search, organized from application to offer.
             </h1>
             <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
