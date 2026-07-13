@@ -125,23 +125,24 @@ function ApplicationsPage() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-5">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Applications</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">Applications</h1>
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
             {data?.length ?? 0} total · track roles from Saved to Offer.
           </p>
         </div>
         <Button
           size="sm"
-          className="bg-foreground text-background hover:bg-foreground/90"
+          className="shrink-0 bg-foreground text-background hover:bg-foreground/90"
           onClick={() => {
             setEditing(null);
             setDialogOpen(true);
           }}
         >
           <IcPlus size={14} className="mr-1.5" />
-          Add application
+          <span className="hidden xs:inline sm:inline">Add application</span>
+          <span className="xs:hidden sm:hidden">Add</span>
         </Button>
       </header>
 
