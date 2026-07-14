@@ -114,9 +114,12 @@ function AuthPage() {
           <Logo showWordmark size={30} />
         </Link>
 
-        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-card transition-colors sm:p-8">
           <div className="mb-6">
-            <h1 className="text-xl font-semibold tracking-tight">
+            <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-primary">
+              Job Search OS
+            </p>
+            <h1 className="mt-2 text-xl font-semibold tracking-tight">
               {mode === "signin" ? "Sign in to Hiredge" : "Create your Hiredge account"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
